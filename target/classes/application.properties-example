@@ -1,5 +1,0 @@
-spring.datasource.url=jdbc:postgresql://localhost:5432/products-api
-spring.datasource.username=
-spring.datasource.password=
-spring.jpa.hibernate.ddl-auto=update // create/update database tables based on models
-spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true // remove logs from hibernate
