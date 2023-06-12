@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,5 +44,19 @@ public class ProductController {
         .<ResponseEntity<Object>>map(
             productModel -> ResponseEntity.status(HttpStatus.OK).body(productModel))
         .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found."));
+  }
+
+  @PutMapping("/products/{id}")
+  public ResponseEntity<Object> updateProduct(
+      @PathVariable(value = "id") UUID id, @RequestBody @Valid ProductRecordDto productRecordDto) {
+    ResponseEntity<Object> getProductResponse = getOneProduct(id);
+
+    if (getProductResponse.getStatusCode() != HttpStatus.OK) return getProductResponse;
+
+    ProductModel product = (ProductModel) getProductResponse.getBody();
+
+    assert product != null;
+    BeanUtils.copyProperties(productRecordDto, product);
+    return ResponseEntity.status(HttpStatus.OK).body(productRepository.save(product));
   }
 }
