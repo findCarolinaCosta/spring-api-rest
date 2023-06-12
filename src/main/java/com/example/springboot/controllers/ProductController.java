@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,5 +59,18 @@ public class ProductController {
     assert product != null;
     BeanUtils.copyProperties(productRecordDto, product);
     return ResponseEntity.status(HttpStatus.OK).body(productRepository.save(product));
+  }
+
+  @DeleteMapping("/products/{id}")
+  public ResponseEntity<Object> deleteProduct(@PathVariable(value = "id") UUID id) {
+    ResponseEntity<Object> getProductResponse = getOneProduct(id);
+
+    if (getProductResponse.getStatusCode() != HttpStatus.OK) return getProductResponse;
+
+    ProductModel product = (ProductModel) getProductResponse.getBody();
+
+    assert product != null;
+    productRepository.delete(product);
+    return ResponseEntity.status(HttpStatus.OK).body("Product deleted sucessfuly.");
   }
 }
